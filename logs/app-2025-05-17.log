@@ -1,0 +1,1 @@
+{"L":"\u001b[31mFATAL\u001b[0m","T":"2025-05-17T19:35:51.391+0700","M":"Failed to connect to database","error":"failed to connect to `host=localhost user=postgres database=hospital_middleware`: failed SASL auth (FATAL: password authentication failed for user \"postgres\" (SQLSTATE 28P01))"}

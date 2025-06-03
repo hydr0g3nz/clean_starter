@@ -1,0 +1,11 @@
+{"L":"\u001b[31mFATAL\u001b[0m","T":"2025-06-03T22:31:57.580+0700","M":"Failed to connect to database","error":"failed to connect to `host=localhost user=user database=topup_wallet`: dial error (dial tcp 127.0.0.1:5432: connectex: No connection could be made because the target machine actively refused it.)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T22:33:31.338+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:16.046+0700","M":"Running database migrations"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:16.311+0700","M":"Database migrations completed successfully"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:16.311+0700","M":"Seeding database with initial data"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:16.315+0700","M":"Database seeding completed successfully"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:16.316+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:40.503+0700","M":"Transaction found in cache","transaction":{"id":15,"user_id":4,"amount":100.55,"payment_method":"credit_card","status":"verified","expires_at":"2025-06-03T23:18:29.0506155+07:00"}}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:40.504+0700","M":"Transaction","transaction":{"id":15,"user_id":4,"amount":100.55,"payment_method":"credit_card","status":"verified","expires_at":"2025-06-03T23:18:29.0506155+07:00"}}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-06-03T23:03:42.441+0700","M":"Failed to get transaction from cache","error":"key does not exist: transaction:15"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-06-03T23:03:45.272+0700","M":"Failed to get transaction from cache","error":"key does not exist: transaction:15"}

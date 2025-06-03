@@ -1,0 +1,61 @@
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T01:57:13.115+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:00:58.464+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:11:49.329+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:16:22.414+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:16:33.933+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:17:46.922+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:23:49.682+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:23:59.818+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:26:32.118+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:27:27.974+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:27:38.380+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:27:57.010+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:28:07.872+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:28:58.687+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:32:48.082+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:32:57.279+0700","M":"Ignored key without a value.","ignored":"transaction:5"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:32:57.279+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:33:55.322+0700","M":"Ignored key without a value.","ignored":"transaction:5"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:33:55.322+0700","M":"Transaction found in cache"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:35:37.095+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:35:45.681+0700","M":"Ignored key without a value.","ignored":"transaction:5"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:35:45.681+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:35:45.681+0700","M":"Ignored key without a value.","ignored":null}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:35:45.681+0700","M":"Transaction found in cache"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:37:44.150+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:37:52.918+0700","M":"Failed to get transaction from cache","error":"key does not exist: transaction:5"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:39:05.920+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:40:40.646+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:41:07.521+0700","M":"Failed to get transaction from cache","error":"key does not exist: transaction:6"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:41:38.748+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:44:37.830+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:44:47.034+0700","M":"Failed to get transaction from cache","error":"key does not exist: transaction:7"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:45:03.212+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(non-pointer transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:47:12.118+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:47:29.858+0700","M":"Ignored key without a value.","ignored":"transaction:10"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:47:29.858+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:47:29.860+0700","M":"Ignored key without a value.","ignored":null}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:47:29.860+0700","M":"Transaction found in cache"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:50:21.974+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:50:44.745+0700","M":"Ignored key without a value.","ignored":"transaction:10"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:50:44.745+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:50:44.746+0700","M":"Ignored key without a value.","ignored":null}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:50:44.746+0700","M":"Transaction found in cache"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:55:02.352+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mFATAL\u001b[0m","T":"2025-04-30T02:55:02.353+0700","M":"Failed to start server","error":"failed to listen: listen tcp4 :8080: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted."}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:56:13.559+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:58:06.142+0700","M":"Ignored key without a value.","ignored":"transaction:11"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:58:06.142+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T02:58:25.562+0700","M":"Ignored key without a value.","ignored":null}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T02:58:25.562+0700","M":"Transaction found in cache"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T03:00:45.336+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T03:02:36.066+0700","M":"Failed to get transaction from cache","error":"json: Unmarshal(nil *transaction.Transaction)"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T03:05:37.809+0700","M":"Starting server","port":"8080"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T03:06:14.080+0700","M":"Ignored key without a value.","ignored":"transaction:13"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T03:06:14.079+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T03:06:15.199+0700","M":"Ignored key without a value.","ignored":{"id":13,"user_id":1,"amount":{},"payment_method":"credit_card","status":"verified","expires_at":"2025-04-30T03:20:50.0912234+07:00"}}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T03:06:15.199+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T03:06:43.094+0700","M":"Ignored key without a value.","ignored":"transaction:14"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T03:06:43.094+0700","M":"Transaction found in cache"}
+{"L":"\u001b[31mERROR\u001b[0m","T":"2025-04-30T03:06:43.095+0700","M":"Ignored key without a value.","ignored":{"id":14,"user_id":1,"amount":{},"payment_method":"credit_card","status":"verified","expires_at":"2025-04-30T03:21:32.1731595+07:00"}}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-04-30T03:06:43.094+0700","M":"Transaction found in cache"}
