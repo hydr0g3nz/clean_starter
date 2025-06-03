@@ -9,3 +9,4 @@
 {"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:03:40.504+0700","M":"Transaction","transaction":{"id":15,"user_id":4,"amount":100.55,"payment_method":"credit_card","status":"verified","expires_at":"2025-06-03T23:18:29.0506155+07:00"}}
 {"L":"\u001b[31mERROR\u001b[0m","T":"2025-06-03T23:03:42.441+0700","M":"Failed to get transaction from cache","error":"key does not exist: transaction:15"}
 {"L":"\u001b[31mERROR\u001b[0m","T":"2025-06-03T23:03:45.272+0700","M":"Failed to get transaction from cache","error":"key does not exist: transaction:15"}
+{"L":"\u001b[34mINFO\u001b[0m","T":"2025-06-03T23:15:37.677+0700","M":"Shutting down server"}
