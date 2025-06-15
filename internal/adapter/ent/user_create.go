@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -21,21 +22,97 @@ type UserCreate struct {
 	conflict []sql.ConflictOption
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (uc *UserCreate) SetTransactionID(s string) *UserCreate {
-	uc.mutation.SetTransactionID(s)
+// SetEmail sets the "email" field.
+func (uc *UserCreate) SetEmail(s string) *UserCreate {
+	uc.mutation.SetEmail(s)
 	return uc
 }
 
-// SetSourceTransactionID sets the "source_transaction_id" field.
-func (uc *UserCreate) SetSourceTransactionID(s string) *UserCreate {
-	uc.mutation.SetSourceTransactionID(s)
+// SetPasswordHash sets the "password_hash" field.
+func (uc *UserCreate) SetPasswordHash(s string) *UserCreate {
+	uc.mutation.SetPasswordHash(s)
 	return uc
 }
 
-// SetTerminalID sets the "terminal_id" field.
-func (uc *UserCreate) SetTerminalID(s string) *UserCreate {
-	uc.mutation.SetTerminalID(s)
+// SetRole sets the "role" field.
+func (uc *UserCreate) SetRole(u user.Role) *UserCreate {
+	uc.mutation.SetRole(u)
+	return uc
+}
+
+// SetIsActive sets the "is_active" field.
+func (uc *UserCreate) SetIsActive(b bool) *UserCreate {
+	uc.mutation.SetIsActive(b)
+	return uc
+}
+
+// SetNillableIsActive sets the "is_active" field if the given value is not nil.
+func (uc *UserCreate) SetNillableIsActive(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetIsActive(*b)
+	}
+	return uc
+}
+
+// SetEmailVerified sets the "email_verified" field.
+func (uc *UserCreate) SetEmailVerified(b bool) *UserCreate {
+	uc.mutation.SetEmailVerified(b)
+	return uc
+}
+
+// SetNillableEmailVerified sets the "email_verified" field if the given value is not nil.
+func (uc *UserCreate) SetNillableEmailVerified(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetEmailVerified(*b)
+	}
+	return uc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetCreatedAt(t)
+	return uc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetCreatedAt(*t)
+	}
+	return uc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetUpdatedAt(t)
+	return uc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdatedAt(*t)
+	}
+	return uc
+}
+
+// SetLastLoginAt sets the "last_login_at" field.
+func (uc *UserCreate) SetLastLoginAt(t time.Time) *UserCreate {
+	uc.mutation.SetLastLoginAt(t)
+	return uc
+}
+
+// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLastLoginAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetLastLoginAt(*t)
+	}
+	return uc
+}
+
+// SetID sets the "id" field.
+func (uc *UserCreate) SetID(i int) *UserCreate {
+	uc.mutation.SetID(i)
 	return uc
 }
 
@@ -46,6 +123,7 @@ func (uc *UserCreate) Mutation() *UserMutation {
 
 // Save creates the User in the database.
 func (uc *UserCreate) Save(ctx context.Context) (*User, error) {
+	uc.defaults()
 	return withHooks(ctx, uc.sqlSave, uc.mutation, uc.hooks)
 }
 
@@ -71,30 +149,67 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uc *UserCreate) defaults() {
+	if _, ok := uc.mutation.IsActive(); !ok {
+		v := user.DefaultIsActive
+		uc.mutation.SetIsActive(v)
+	}
+	if _, ok := uc.mutation.EmailVerified(); !ok {
+		v := user.DefaultEmailVerified
+		uc.mutation.SetEmailVerified(v)
+	}
+	if _, ok := uc.mutation.CreatedAt(); !ok {
+		v := user.DefaultCreatedAt()
+		uc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		v := user.DefaultUpdatedAt()
+		uc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.TransactionID(); !ok {
-		return &ValidationError{Name: "transaction_id", err: errors.New(`ent: missing required field "User.transaction_id"`)}
+	if _, ok := uc.mutation.Email(); !ok {
+		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "User.email"`)}
 	}
-	if v, ok := uc.mutation.TransactionID(); ok {
-		if err := user.TransactionIDValidator(v); err != nil {
-			return &ValidationError{Name: "transaction_id", err: fmt.Errorf(`ent: validator failed for field "User.transaction_id": %w`, err)}
+	if v, ok := uc.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.SourceTransactionID(); !ok {
-		return &ValidationError{Name: "source_transaction_id", err: errors.New(`ent: missing required field "User.source_transaction_id"`)}
+	if _, ok := uc.mutation.PasswordHash(); !ok {
+		return &ValidationError{Name: "password_hash", err: errors.New(`ent: missing required field "User.password_hash"`)}
 	}
-	if v, ok := uc.mutation.SourceTransactionID(); ok {
-		if err := user.SourceTransactionIDValidator(v); err != nil {
-			return &ValidationError{Name: "source_transaction_id", err: fmt.Errorf(`ent: validator failed for field "User.source_transaction_id": %w`, err)}
+	if v, ok := uc.mutation.PasswordHash(); ok {
+		if err := user.PasswordHashValidator(v); err != nil {
+			return &ValidationError{Name: "password_hash", err: fmt.Errorf(`ent: validator failed for field "User.password_hash": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.TerminalID(); !ok {
-		return &ValidationError{Name: "terminal_id", err: errors.New(`ent: missing required field "User.terminal_id"`)}
+	if _, ok := uc.mutation.Role(); !ok {
+		return &ValidationError{Name: "role", err: errors.New(`ent: missing required field "User.role"`)}
 	}
-	if v, ok := uc.mutation.TerminalID(); ok {
-		if err := user.TerminalIDValidator(v); err != nil {
-			return &ValidationError{Name: "terminal_id", err: fmt.Errorf(`ent: validator failed for field "User.terminal_id": %w`, err)}
+	if v, ok := uc.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.IsActive(); !ok {
+		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "User.is_active"`)}
+	}
+	if _, ok := uc.mutation.EmailVerified(); !ok {
+		return &ValidationError{Name: "email_verified", err: errors.New(`ent: missing required field "User.email_verified"`)}
+	}
+	if _, ok := uc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
+	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
+	}
+	if v, ok := uc.mutation.ID(); ok {
+		if err := user.IDValidator(v); err != nil {
+			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "User.id": %w`, err)}
 		}
 	}
 	return nil
@@ -111,8 +226,10 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	uc.mutation.id = &_node.ID
 	uc.mutation.done = true
 	return _node, nil
@@ -124,17 +241,41 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	)
 	_spec.OnConflict = uc.conflict
-	if value, ok := uc.mutation.TransactionID(); ok {
-		_spec.SetField(user.FieldTransactionID, field.TypeString, value)
-		_node.TransactionID = value
+	if id, ok := uc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
 	}
-	if value, ok := uc.mutation.SourceTransactionID(); ok {
-		_spec.SetField(user.FieldSourceTransactionID, field.TypeString, value)
-		_node.SourceTransactionID = value
+	if value, ok := uc.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
+		_node.Email = value
 	}
-	if value, ok := uc.mutation.TerminalID(); ok {
-		_spec.SetField(user.FieldTerminalID, field.TypeString, value)
-		_node.TerminalID = value
+	if value, ok := uc.mutation.PasswordHash(); ok {
+		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
+		_node.PasswordHash = value
+	}
+	if value, ok := uc.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
+		_node.Role = value
+	}
+	if value, ok := uc.mutation.IsActive(); ok {
+		_spec.SetField(user.FieldIsActive, field.TypeBool, value)
+		_node.IsActive = value
+	}
+	if value, ok := uc.mutation.EmailVerified(); ok {
+		_spec.SetField(user.FieldEmailVerified, field.TypeBool, value)
+		_node.EmailVerified = value
+	}
+	if value, ok := uc.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := uc.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := uc.mutation.LastLoginAt(); ok {
+		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
+		_node.LastLoginAt = &value
 	}
 	return _node, _spec
 }
@@ -143,7 +284,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.User.Create().
-//		SetTransactionID(v).
+//		SetEmail(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -152,7 +293,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.UserUpsert) {
-//			SetTransactionID(v+v).
+//			SetEmail(v+v).
 //		}).
 //		Exec(ctx)
 func (uc *UserCreate) OnConflict(opts ...sql.ConflictOption) *UserUpsertOne {
@@ -188,52 +329,117 @@ type (
 	}
 )
 
-// SetTransactionID sets the "transaction_id" field.
-func (u *UserUpsert) SetTransactionID(v string) *UserUpsert {
-	u.Set(user.FieldTransactionID, v)
+// SetEmail sets the "email" field.
+func (u *UserUpsert) SetEmail(v string) *UserUpsert {
+	u.Set(user.FieldEmail, v)
 	return u
 }
 
-// UpdateTransactionID sets the "transaction_id" field to the value that was provided on create.
-func (u *UserUpsert) UpdateTransactionID() *UserUpsert {
-	u.SetExcluded(user.FieldTransactionID)
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserUpsert) UpdateEmail() *UserUpsert {
+	u.SetExcluded(user.FieldEmail)
 	return u
 }
 
-// SetSourceTransactionID sets the "source_transaction_id" field.
-func (u *UserUpsert) SetSourceTransactionID(v string) *UserUpsert {
-	u.Set(user.FieldSourceTransactionID, v)
+// SetPasswordHash sets the "password_hash" field.
+func (u *UserUpsert) SetPasswordHash(v string) *UserUpsert {
+	u.Set(user.FieldPasswordHash, v)
 	return u
 }
 
-// UpdateSourceTransactionID sets the "source_transaction_id" field to the value that was provided on create.
-func (u *UserUpsert) UpdateSourceTransactionID() *UserUpsert {
-	u.SetExcluded(user.FieldSourceTransactionID)
+// UpdatePasswordHash sets the "password_hash" field to the value that was provided on create.
+func (u *UserUpsert) UpdatePasswordHash() *UserUpsert {
+	u.SetExcluded(user.FieldPasswordHash)
 	return u
 }
 
-// SetTerminalID sets the "terminal_id" field.
-func (u *UserUpsert) SetTerminalID(v string) *UserUpsert {
-	u.Set(user.FieldTerminalID, v)
+// SetRole sets the "role" field.
+func (u *UserUpsert) SetRole(v user.Role) *UserUpsert {
+	u.Set(user.FieldRole, v)
 	return u
 }
 
-// UpdateTerminalID sets the "terminal_id" field to the value that was provided on create.
-func (u *UserUpsert) UpdateTerminalID() *UserUpsert {
-	u.SetExcluded(user.FieldTerminalID)
+// UpdateRole sets the "role" field to the value that was provided on create.
+func (u *UserUpsert) UpdateRole() *UserUpsert {
+	u.SetExcluded(user.FieldRole)
 	return u
 }
 
-// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// SetIsActive sets the "is_active" field.
+func (u *UserUpsert) SetIsActive(v bool) *UserUpsert {
+	u.Set(user.FieldIsActive, v)
+	return u
+}
+
+// UpdateIsActive sets the "is_active" field to the value that was provided on create.
+func (u *UserUpsert) UpdateIsActive() *UserUpsert {
+	u.SetExcluded(user.FieldIsActive)
+	return u
+}
+
+// SetEmailVerified sets the "email_verified" field.
+func (u *UserUpsert) SetEmailVerified(v bool) *UserUpsert {
+	u.Set(user.FieldEmailVerified, v)
+	return u
+}
+
+// UpdateEmailVerified sets the "email_verified" field to the value that was provided on create.
+func (u *UserUpsert) UpdateEmailVerified() *UserUpsert {
+	u.SetExcluded(user.FieldEmailVerified)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserUpsert) SetUpdatedAt(v time.Time) *UserUpsert {
+	u.Set(user.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserUpsert) UpdateUpdatedAt() *UserUpsert {
+	u.SetExcluded(user.FieldUpdatedAt)
+	return u
+}
+
+// SetLastLoginAt sets the "last_login_at" field.
+func (u *UserUpsert) SetLastLoginAt(v time.Time) *UserUpsert {
+	u.Set(user.FieldLastLoginAt, v)
+	return u
+}
+
+// UpdateLastLoginAt sets the "last_login_at" field to the value that was provided on create.
+func (u *UserUpsert) UpdateLastLoginAt() *UserUpsert {
+	u.SetExcluded(user.FieldLastLoginAt)
+	return u
+}
+
+// ClearLastLoginAt clears the value of the "last_login_at" field.
+func (u *UserUpsert) ClearLastLoginAt() *UserUpsert {
+	u.SetNull(user.FieldLastLoginAt)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.User.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(user.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *UserUpsertOne) UpdateNewValues() *UserUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(user.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(user.FieldCreatedAt)
+		}
+	}))
 	return u
 }
 
@@ -264,45 +470,108 @@ func (u *UserUpsertOne) Update(set func(*UserUpsert)) *UserUpsertOne {
 	return u
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (u *UserUpsertOne) SetTransactionID(v string) *UserUpsertOne {
+// SetEmail sets the "email" field.
+func (u *UserUpsertOne) SetEmail(v string) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
-		s.SetTransactionID(v)
+		s.SetEmail(v)
 	})
 }
 
-// UpdateTransactionID sets the "transaction_id" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateTransactionID() *UserUpsertOne {
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateEmail() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
-		s.UpdateTransactionID()
+		s.UpdateEmail()
 	})
 }
 
-// SetSourceTransactionID sets the "source_transaction_id" field.
-func (u *UserUpsertOne) SetSourceTransactionID(v string) *UserUpsertOne {
+// SetPasswordHash sets the "password_hash" field.
+func (u *UserUpsertOne) SetPasswordHash(v string) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
-		s.SetSourceTransactionID(v)
+		s.SetPasswordHash(v)
 	})
 }
 
-// UpdateSourceTransactionID sets the "source_transaction_id" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateSourceTransactionID() *UserUpsertOne {
+// UpdatePasswordHash sets the "password_hash" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdatePasswordHash() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
-		s.UpdateSourceTransactionID()
+		s.UpdatePasswordHash()
 	})
 }
 
-// SetTerminalID sets the "terminal_id" field.
-func (u *UserUpsertOne) SetTerminalID(v string) *UserUpsertOne {
+// SetRole sets the "role" field.
+func (u *UserUpsertOne) SetRole(v user.Role) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
-		s.SetTerminalID(v)
+		s.SetRole(v)
 	})
 }
 
-// UpdateTerminalID sets the "terminal_id" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateTerminalID() *UserUpsertOne {
+// UpdateRole sets the "role" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateRole() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
-		s.UpdateTerminalID()
+		s.UpdateRole()
+	})
+}
+
+// SetIsActive sets the "is_active" field.
+func (u *UserUpsertOne) SetIsActive(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsActive(v)
+	})
+}
+
+// UpdateIsActive sets the "is_active" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateIsActive() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsActive()
+	})
+}
+
+// SetEmailVerified sets the "email_verified" field.
+func (u *UserUpsertOne) SetEmailVerified(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetEmailVerified(v)
+	})
+}
+
+// UpdateEmailVerified sets the "email_verified" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateEmailVerified() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateEmailVerified()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserUpsertOne) SetUpdatedAt(v time.Time) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateUpdatedAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetLastLoginAt sets the "last_login_at" field.
+func (u *UserUpsertOne) SetLastLoginAt(v time.Time) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetLastLoginAt(v)
+	})
+}
+
+// UpdateLastLoginAt sets the "last_login_at" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateLastLoginAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateLastLoginAt()
+	})
+}
+
+// ClearLastLoginAt clears the value of the "last_login_at" field.
+func (u *UserUpsertOne) ClearLastLoginAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearLastLoginAt()
 	})
 }
 
@@ -358,6 +627,7 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 	for i := range ucb.builders {
 		func(i int, root context.Context) {
 			builder := ucb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserMutation)
 				if !ok {
@@ -385,7 +655,7 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}
@@ -440,7 +710,7 @@ func (ucb *UserCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.UserUpsert) {
-//			SetTransactionID(v+v).
+//			SetEmail(v+v).
 //		}).
 //		Exec(ctx)
 func (ucb *UserCreateBulk) OnConflict(opts ...sql.ConflictOption) *UserUpsertBulk {
@@ -475,10 +745,23 @@ type UserUpsertBulk struct {
 //	client.User.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(user.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *UserUpsertBulk) UpdateNewValues() *UserUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(user.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(user.FieldCreatedAt)
+			}
+		}
+	}))
 	return u
 }
 
@@ -509,45 +792,108 @@ func (u *UserUpsertBulk) Update(set func(*UserUpsert)) *UserUpsertBulk {
 	return u
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (u *UserUpsertBulk) SetTransactionID(v string) *UserUpsertBulk {
+// SetEmail sets the "email" field.
+func (u *UserUpsertBulk) SetEmail(v string) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
-		s.SetTransactionID(v)
+		s.SetEmail(v)
 	})
 }
 
-// UpdateTransactionID sets the "transaction_id" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateTransactionID() *UserUpsertBulk {
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateEmail() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
-		s.UpdateTransactionID()
+		s.UpdateEmail()
 	})
 }
 
-// SetSourceTransactionID sets the "source_transaction_id" field.
-func (u *UserUpsertBulk) SetSourceTransactionID(v string) *UserUpsertBulk {
+// SetPasswordHash sets the "password_hash" field.
+func (u *UserUpsertBulk) SetPasswordHash(v string) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
-		s.SetSourceTransactionID(v)
+		s.SetPasswordHash(v)
 	})
 }
 
-// UpdateSourceTransactionID sets the "source_transaction_id" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateSourceTransactionID() *UserUpsertBulk {
+// UpdatePasswordHash sets the "password_hash" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdatePasswordHash() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
-		s.UpdateSourceTransactionID()
+		s.UpdatePasswordHash()
 	})
 }
 
-// SetTerminalID sets the "terminal_id" field.
-func (u *UserUpsertBulk) SetTerminalID(v string) *UserUpsertBulk {
+// SetRole sets the "role" field.
+func (u *UserUpsertBulk) SetRole(v user.Role) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
-		s.SetTerminalID(v)
+		s.SetRole(v)
 	})
 }
 
-// UpdateTerminalID sets the "terminal_id" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateTerminalID() *UserUpsertBulk {
+// UpdateRole sets the "role" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateRole() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
-		s.UpdateTerminalID()
+		s.UpdateRole()
+	})
+}
+
+// SetIsActive sets the "is_active" field.
+func (u *UserUpsertBulk) SetIsActive(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsActive(v)
+	})
+}
+
+// UpdateIsActive sets the "is_active" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateIsActive() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsActive()
+	})
+}
+
+// SetEmailVerified sets the "email_verified" field.
+func (u *UserUpsertBulk) SetEmailVerified(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetEmailVerified(v)
+	})
+}
+
+// UpdateEmailVerified sets the "email_verified" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateEmailVerified() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateEmailVerified()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserUpsertBulk) SetUpdatedAt(v time.Time) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateUpdatedAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetLastLoginAt sets the "last_login_at" field.
+func (u *UserUpsertBulk) SetLastLoginAt(v time.Time) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetLastLoginAt(v)
+	})
+}
+
+// UpdateLastLoginAt sets the "last_login_at" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateLastLoginAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateLastLoginAt()
+	})
+}
+
+// ClearLastLoginAt clears the value of the "last_login_at" field.
+func (u *UserUpsertBulk) ClearLastLoginAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearLastLoginAt()
 	})
 }
 

@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"time"
+
 	"github.com/hydr0g3nz/wallet_topup_system/internal/adapter/ent/schema"
 	"github.com/hydr0g3nz/wallet_topup_system/internal/adapter/ent/user"
 )
@@ -13,16 +15,34 @@ import (
 func init() {
 	userFields := schema.User{}.Fields()
 	_ = userFields
-	// userDescTransactionID is the schema descriptor for transaction_id field.
-	userDescTransactionID := userFields[0].Descriptor()
-	// user.TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
-	user.TransactionIDValidator = userDescTransactionID.Validators[0].(func(string) error)
-	// userDescSourceTransactionID is the schema descriptor for source_transaction_id field.
-	userDescSourceTransactionID := userFields[1].Descriptor()
-	// user.SourceTransactionIDValidator is a validator for the "source_transaction_id" field. It is called by the builders before save.
-	user.SourceTransactionIDValidator = userDescSourceTransactionID.Validators[0].(func(string) error)
-	// userDescTerminalID is the schema descriptor for terminal_id field.
-	userDescTerminalID := userFields[2].Descriptor()
-	// user.TerminalIDValidator is a validator for the "terminal_id" field. It is called by the builders before save.
-	user.TerminalIDValidator = userDescTerminalID.Validators[0].(func(string) error)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[1].Descriptor()
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	// userDescPasswordHash is the schema descriptor for password_hash field.
+	userDescPasswordHash := userFields[2].Descriptor()
+	// user.PasswordHashValidator is a validator for the "password_hash" field. It is called by the builders before save.
+	user.PasswordHashValidator = userDescPasswordHash.Validators[0].(func(string) error)
+	// userDescIsActive is the schema descriptor for is_active field.
+	userDescIsActive := userFields[4].Descriptor()
+	// user.DefaultIsActive holds the default value on creation for the is_active field.
+	user.DefaultIsActive = userDescIsActive.Default.(bool)
+	// userDescEmailVerified is the schema descriptor for email_verified field.
+	userDescEmailVerified := userFields[5].Descriptor()
+	// user.DefaultEmailVerified holds the default value on creation for the email_verified field.
+	user.DefaultEmailVerified = userDescEmailVerified.Default.(bool)
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userFields[6].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescUpdatedAt is the schema descriptor for updated_at field.
+	userDescUpdatedAt := userFields[7].Descriptor()
+	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
+	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescID is the schema descriptor for id field.
+	userDescID := userFields[0].Descriptor()
+	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	user.IDValidator = userDescID.Validators[0].(func(int) error)
 }

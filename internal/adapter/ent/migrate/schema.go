@@ -11,9 +11,14 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "transaction_id", Type: field.TypeString, Size: 100},
-		{Name: "source_transaction_id", Type: field.TypeString, Size: 100},
-		{Name: "terminal_id", Type: field.TypeString, Size: 50},
+		{Name: "email", Type: field.TypeString, Unique: true},
+		{Name: "password_hash", Type: field.TypeString},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"candidate", "company_hr", "admin"}},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "email_verified", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "last_login_at", Type: field.TypeTime, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -22,9 +27,24 @@ var (
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "user_transaction_id_source_transaction_id_terminal_id",
+				Name:    "user_email",
 				Unique:  true,
-				Columns: []*schema.Column{UsersColumns[1], UsersColumns[2], UsersColumns[3]},
+				Columns: []*schema.Column{UsersColumns[1]},
+			},
+			{
+				Name:    "user_role",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[3]},
+			},
+			{
+				Name:    "user_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[4]},
+			},
+			{
+				Name:    "user_role_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[3], UsersColumns[4]},
 			},
 		},
 	}

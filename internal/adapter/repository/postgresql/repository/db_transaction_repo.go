@@ -25,7 +25,6 @@ func (d *DBTransactionRepository) DoInTransaction(fn func(repo repository.Reposi
 	repoCtx := &RepositoryTransaction{
 		transactionRepo: NewTransactionRepository(tx),
 		walletRepo:      NewWalletRepository(tx),
-		userRepo:        NewUserRepository(tx),
 	}
 	// ทำงานภายใน transaction
 	if err := fn(repoCtx); err != nil {

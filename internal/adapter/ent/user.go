@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -16,12 +17,22 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// TransactionID จากระบบ TGW format: Ydddhhxxxxxx
-	TransactionID string `json:"transaction_id,omitempty"`
-	// Transaction ID ของระบบต้นทาง
-	SourceTransactionID string `json:"source_transaction_id,omitempty"`
-	// terminal number
-	TerminalID   string `json:"terminal_id,omitempty"`
+	// Email holds the value of the "email" field.
+	Email string `json:"email,omitempty"`
+	// PasswordHash holds the value of the "password_hash" field.
+	PasswordHash string `json:"-"`
+	// User role: candidate, company_hr, or admin
+	Role user.Role `json:"role,omitempty"`
+	// Whether the user account is active
+	IsActive bool `json:"is_active,omitempty"`
+	// Whether the user's email has been verified
+	EmailVerified bool `json:"email_verified,omitempty"`
+	// When the user was created
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// When the user was last updated
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// When the user last logged in
+	LastLoginAt  *time.Time `json:"last_login_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -30,10 +41,14 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldIsActive, user.FieldEmailVerified:
+			values[i] = new(sql.NullBool)
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldTransactionID, user.FieldSourceTransactionID, user.FieldTerminalID:
+		case user.FieldEmail, user.FieldPasswordHash, user.FieldRole:
 			values[i] = new(sql.NullString)
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldLastLoginAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -55,23 +70,54 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = int(value.Int64)
-		case user.FieldTransactionID:
+		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field transaction_id", values[i])
+				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				u.TransactionID = value.String
+				u.Email = value.String
 			}
-		case user.FieldSourceTransactionID:
+		case user.FieldPasswordHash:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field source_transaction_id", values[i])
+				return fmt.Errorf("unexpected type %T for field password_hash", values[i])
 			} else if value.Valid {
-				u.SourceTransactionID = value.String
+				u.PasswordHash = value.String
 			}
-		case user.FieldTerminalID:
+		case user.FieldRole:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field terminal_id", values[i])
+				return fmt.Errorf("unexpected type %T for field role", values[i])
 			} else if value.Valid {
-				u.TerminalID = value.String
+				u.Role = user.Role(value.String)
+			}
+		case user.FieldIsActive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_active", values[i])
+			} else if value.Valid {
+				u.IsActive = value.Bool
+			}
+		case user.FieldEmailVerified:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field email_verified", values[i])
+			} else if value.Valid {
+				u.EmailVerified = value.Bool
+			}
+		case user.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				u.CreatedAt = value.Time
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				u.UpdatedAt = value.Time
+			}
+		case user.FieldLastLoginAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_login_at", values[i])
+			} else if value.Valid {
+				u.LastLoginAt = new(time.Time)
+				*u.LastLoginAt = value.Time
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -109,14 +155,30 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
-	builder.WriteString("transaction_id=")
-	builder.WriteString(u.TransactionID)
+	builder.WriteString("email=")
+	builder.WriteString(u.Email)
 	builder.WriteString(", ")
-	builder.WriteString("source_transaction_id=")
-	builder.WriteString(u.SourceTransactionID)
+	builder.WriteString("password_hash=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("terminal_id=")
-	builder.WriteString(u.TerminalID)
+	builder.WriteString("role=")
+	builder.WriteString(fmt.Sprintf("%v", u.Role))
+	builder.WriteString(", ")
+	builder.WriteString("is_active=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsActive))
+	builder.WriteString(", ")
+	builder.WriteString("email_verified=")
+	builder.WriteString(fmt.Sprintf("%v", u.EmailVerified))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := u.LastLoginAt; v != nil {
+		builder.WriteString("last_login_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

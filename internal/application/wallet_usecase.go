@@ -37,9 +37,9 @@ func NewWalletUsecase(
 	transactionRepo repository.TransactionRepository,
 	walletRepo repository.WalletRepository,
 	cache infra.CacheService,
-	tx repository.DBTransaction,
 	logger infra.Logger,
 	config config.Config,
+	tx repository.DBTransaction,
 
 ) WalletUsecase {
 	repoTransaction := repoImpl.NewRepositoryTransaction(transactionRepo, walletRepo, userRepo)
@@ -61,10 +61,10 @@ func (uc *WalletUsecaseImpl) VerifyTopup(userID uint, amount float64, paymentMet
 	if amount > uc.cfg.App.MaxAcceptedAmount {
 		return entity.Transaction{}, errs.ErrAmountExceedsLimit
 	}
-	_, err := uc.userRepo.FindById(userID)
-	if err != nil {
-		return entity.Transaction{}, err
-	}
+	// _, err := uc.userRepo.FindById(userID)
+	// if err != nil {
+	// 	return entity.Transaction{}, err
+	// }
 	newTransaction, err := entity.NewTransaction(userID, amount, paymentMethod, string(vo.StatusVerified), time.Now().Add(15*time.Minute))
 	if err != nil {
 		return entity.Transaction{}, err

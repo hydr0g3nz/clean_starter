@@ -1,17 +1,17 @@
 package infra
 
 type Logger interface {
-	Debug(msg string, fields map[string]interface{})
-	Info(msg string, fields map[string]interface{})
-	Warn(msg string, fields map[string]interface{})
-	Error(msg string, fields map[string]interface{})
-	Fatal(msg string, fields map[string]interface{}) // Fatal should typically cause process exit
+	Debug(msg string, fields ...interface{})
+	Debugf(format string, args ...interface{})
+	Info(msg string, fields ...interface{})
+	Infof(format string, args ...interface{})
+	Warn(msg string, fields ...interface{})
+	Warnf(format string, args ...interface{})
+	Error(msg string, fields ...interface{})
+	Errorf(format string, args ...interface{})
+	Fatal(msg string, fields ...interface{})
+	Fatalf(format string, args ...interface{})
 
-	// Creates a child logger with added fields
-	With(fields map[string]interface{}) Logger // Return the interface type
-
-	// Sync flushes any buffered log entries.
+	With(fields ...interface{}) Logger
 	Sync() error
-
-	// Close() error // Optional, if needed to close file handles etc.
 }

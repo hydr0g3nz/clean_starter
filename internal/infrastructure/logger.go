@@ -105,38 +105,44 @@ func mapToZapFields(fields map[string]interface{}) []zapcore.Field {
 }
 
 // Implement the AppLogger methods
-
-func (l *Logger) Debug(msg string, fields map[string]interface{}) {
-	zapFields := mapToZapFields(fields)
-	l.zap.Debug(msg, zapFields...)
+func (l *Logger) Debug(msg string, fields ...interface{}) {
+	l.zap.Debug(msg, toZapFields(fields...)...)
 }
 
-func (l *Logger) Info(msg string, fields map[string]interface{}) {
-	zapFields := mapToZapFields(fields)
-	l.zap.Info(msg, zapFields...)
+func (l *Logger) Debugf(format string, args ...interface{}) {
+	l.zap.Sugar().Debugf(format, args...)
 }
 
-func (l *Logger) Warn(msg string, fields map[string]interface{}) {
-	zapFields := mapToZapFields(fields)
-	l.zap.Warn(msg, zapFields...)
+func (l *Logger) Info(msg string, fields ...interface{}) {
+	l.zap.Info(msg, toZapFields(fields...)...)
 }
 
-func (l *Logger) Error(msg string, fields map[string]interface{}) {
-	zapFields := mapToZapFields(fields)
-	l.zap.Error(msg, zapFields...)
+func (l *Logger) Infof(format string, args ...interface{}) {
+	l.zap.Sugar().Infof(format, args...)
 }
 
-func (l *Logger) Fatal(msg string, fields map[string]interface{}) {
-	zapFields := mapToZapFields(fields)
-	l.zap.Fatal(msg, zapFields...)
+func (l *Logger) Warn(msg string, fields ...interface{}) {
+	l.zap.Warn(msg, toZapFields(fields...)...)
 }
 
-func (l *Logger) With(fields map[string]interface{}) infra.Logger {
-	zapFields := mapToZapFields(fields)
-	// Return the new logger wrapped in our Logger struct, cast as the interface
-	return &Logger{
-		zap: l.zap.With(zapFields...),
-	}
+func (l *Logger) Warnf(format string, args ...interface{}) {
+	l.zap.Sugar().Warnf(format, args...)
+}
+
+func (l *Logger) Error(msg string, fields ...interface{}) {
+	l.zap.Error(msg, toZapFields(fields...)...)
+}
+
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.zap.Sugar().Errorf(format, args...)
+}
+
+func (l *Logger) Fatal(msg string, fields ...interface{}) {
+	l.zap.Fatal(msg, toZapFields(fields...)...)
+}
+
+func (l *Logger) Fatalf(format string, args ...interface{}) {
+	l.zap.Sugar().Fatalf(format, args...)
 }
 
 func (l *Logger) Sync() error {
@@ -144,10 +150,28 @@ func (l *Logger) Sync() error {
 	// If you were managing the file handle directly, add file.Close() here.
 	return l.zap.Sync()
 }
+func (l *Logger) With(fields ...interface{}) infra.Logger {
+	return &Logger{
+		zap: l.zap.With(toZapFields(fields...)...),
+	}
+}
 
 // Optional Close method if you need explicit resource cleanup
 func (l *Logger) Close() error {
 	syncErr := l.zap.Sync()
 	// Add file.Close() logic here if you stored the file handle
 	return syncErr
+}
+func toZapFields(fields ...interface{}) []zapcore.Field {
+	zapFields := make([]zapcore.Field, 0, len(fields)/2)
+
+	for i := 0; i < len(fields)-1; i += 2 {
+		key, ok := fields[i].(string)
+		if !ok {
+			continue // ข้ามถ้า key ไม่ใช่ string
+		}
+		zapFields = append(zapFields, zap.Any(key, fields[i+1]))
+	}
+
+	return zapFields
 }

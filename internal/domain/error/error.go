@@ -10,3 +10,6 @@ var ErrTransactionNotVerified = errors.New("transaction is not in 'verified' sta
 var ErrAmountExceedsLimit = errors.New("amount exceeds maximum limit")
 var ErrInvalidPaymentMethod = errors.New("invalid payment method")
 var ErrInvalidTransactionStatus = errors.New("invalid transaction status")
+
+// vo
+var ErrInvalidUserRole = errors.New("invalid user role")

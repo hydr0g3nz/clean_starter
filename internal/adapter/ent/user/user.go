@@ -3,6 +3,9 @@
 package user
 
 import (
+	"fmt"
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -11,12 +14,22 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldTransactionID holds the string denoting the transaction_id field in the database.
-	FieldTransactionID = "transaction_id"
-	// FieldSourceTransactionID holds the string denoting the source_transaction_id field in the database.
-	FieldSourceTransactionID = "source_transaction_id"
-	// FieldTerminalID holds the string denoting the terminal_id field in the database.
-	FieldTerminalID = "terminal_id"
+	// FieldEmail holds the string denoting the email field in the database.
+	FieldEmail = "email"
+	// FieldPasswordHash holds the string denoting the password_hash field in the database.
+	FieldPasswordHash = "password_hash"
+	// FieldRole holds the string denoting the role field in the database.
+	FieldRole = "role"
+	// FieldIsActive holds the string denoting the is_active field in the database.
+	FieldIsActive = "is_active"
+	// FieldEmailVerified holds the string denoting the email_verified field in the database.
+	FieldEmailVerified = "email_verified"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldLastLoginAt holds the string denoting the last_login_at field in the database.
+	FieldLastLoginAt = "last_login_at"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 )
@@ -24,9 +37,14 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
-	FieldTransactionID,
-	FieldSourceTransactionID,
-	FieldTerminalID,
+	FieldEmail,
+	FieldPasswordHash,
+	FieldRole,
+	FieldIsActive,
+	FieldEmailVerified,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldLastLoginAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -40,13 +58,47 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
-	TransactionIDValidator func(string) error
-	// SourceTransactionIDValidator is a validator for the "source_transaction_id" field. It is called by the builders before save.
-	SourceTransactionIDValidator func(string) error
-	// TerminalIDValidator is a validator for the "terminal_id" field. It is called by the builders before save.
-	TerminalIDValidator func(string) error
+	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	EmailValidator func(string) error
+	// PasswordHashValidator is a validator for the "password_hash" field. It is called by the builders before save.
+	PasswordHashValidator func(string) error
+	// DefaultIsActive holds the default value on creation for the "is_active" field.
+	DefaultIsActive bool
+	// DefaultEmailVerified holds the default value on creation for the "email_verified" field.
+	DefaultEmailVerified bool
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// IDValidator is a validator for the "id" field. It is called by the builders before save.
+	IDValidator func(int) error
 )
+
+// Role defines the type for the "role" enum field.
+type Role string
+
+// Role values.
+const (
+	RoleCandidate Role = "candidate"
+	RoleCompanyHr Role = "company_hr"
+	RoleAdmin     Role = "admin"
+)
+
+func (r Role) String() string {
+	return string(r)
+}
+
+// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
+func RoleValidator(r Role) error {
+	switch r {
+	case RoleCandidate, RoleCompanyHr, RoleAdmin:
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for role field: %q", r)
+	}
+}
 
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
@@ -56,17 +108,42 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByTransactionID orders the results by the transaction_id field.
-func ByTransactionID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTransactionID, opts...).ToFunc()
+// ByEmail orders the results by the email field.
+func ByEmail(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmail, opts...).ToFunc()
 }
 
-// BySourceTransactionID orders the results by the source_transaction_id field.
-func BySourceTransactionID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSourceTransactionID, opts...).ToFunc()
+// ByPasswordHash orders the results by the password_hash field.
+func ByPasswordHash(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPasswordHash, opts...).ToFunc()
 }
 
-// ByTerminalID orders the results by the terminal_id field.
-func ByTerminalID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTerminalID, opts...).ToFunc()
+// ByRole orders the results by the role field.
+func ByRole(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRole, opts...).ToFunc()
+}
+
+// ByIsActive orders the results by the is_active field.
+func ByIsActive(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsActive, opts...).ToFunc()
+}
+
+// ByEmailVerified orders the results by the email_verified field.
+func ByEmailVerified(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmailVerified, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByLastLoginAt orders the results by the last_login_at field.
+func ByLastLoginAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastLoginAt, opts...).ToFunc()
 }

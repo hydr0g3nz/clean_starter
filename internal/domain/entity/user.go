@@ -1,35 +1,27 @@
 package entity
 
-// User represents the users table
+import (
+	"time"
+
+	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/vo"
+)
+
+// User represents the user domain entity
 type User struct {
-	ID        uint
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
-	Phone     string
+	ID            int         `json:"id"`
+	Email         string      `json:"email"`
+	PasswordHash  string      `json:"-"` // Hide password hash in JSON
+	Role          vo.UserRole `json:"role"`
+	IsActive      bool        `json:"is_active"`
+	EmailVerified bool        `json:"email_verified"`
+	CreatedAt     time.Time   `json:"created_at"`
+	UpdatedAt     time.Time   `json:"updated_at"`
+	LastLoginAt   *time.Time  `json:"last_login_at,omitempty"`
 }
 
-func (u User) ToNotEmptyValueMap() map[string]interface{} {
-	result := make(map[string]interface{})
-	if u.FirstName != "" {
-		result["first_name"] = u.FirstName
+func (u *User) IsValid() bool {
+	if u.Email == "" || u.PasswordHash == "" || u.Role == "" {
+		return false
 	}
-	if u.LastName != "" {
-		result["last_name"] = u.LastName
-	}
-	if u.Email != "" {
-		result["email"] = u.Email
-	}
-	if u.Phone != "" {
-		result["phone"] = u.Phone
-	}
-	return result
-}
-
-type UserFilter struct {
-	FirstName *string
-	LastName  *string
-	Email     *string
-	Phone     *string
+	return true
 }

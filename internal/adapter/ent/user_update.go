@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -28,45 +29,99 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (uu *UserUpdate) SetTransactionID(s string) *UserUpdate {
-	uu.mutation.SetTransactionID(s)
+// SetEmail sets the "email" field.
+func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
+	uu.mutation.SetEmail(s)
 	return uu
 }
 
-// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableTransactionID(s *string) *UserUpdate {
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetTransactionID(*s)
+		uu.SetEmail(*s)
 	}
 	return uu
 }
 
-// SetSourceTransactionID sets the "source_transaction_id" field.
-func (uu *UserUpdate) SetSourceTransactionID(s string) *UserUpdate {
-	uu.mutation.SetSourceTransactionID(s)
+// SetPasswordHash sets the "password_hash" field.
+func (uu *UserUpdate) SetPasswordHash(s string) *UserUpdate {
+	uu.mutation.SetPasswordHash(s)
 	return uu
 }
 
-// SetNillableSourceTransactionID sets the "source_transaction_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableSourceTransactionID(s *string) *UserUpdate {
+// SetNillablePasswordHash sets the "password_hash" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePasswordHash(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetSourceTransactionID(*s)
+		uu.SetPasswordHash(*s)
 	}
 	return uu
 }
 
-// SetTerminalID sets the "terminal_id" field.
-func (uu *UserUpdate) SetTerminalID(s string) *UserUpdate {
-	uu.mutation.SetTerminalID(s)
+// SetRole sets the "role" field.
+func (uu *UserUpdate) SetRole(u user.Role) *UserUpdate {
+	uu.mutation.SetRole(u)
 	return uu
 }
 
-// SetNillableTerminalID sets the "terminal_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableTerminalID(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetTerminalID(*s)
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableRole(u *user.Role) *UserUpdate {
+	if u != nil {
+		uu.SetRole(*u)
 	}
+	return uu
+}
+
+// SetIsActive sets the "is_active" field.
+func (uu *UserUpdate) SetIsActive(b bool) *UserUpdate {
+	uu.mutation.SetIsActive(b)
+	return uu
+}
+
+// SetNillableIsActive sets the "is_active" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableIsActive(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetIsActive(*b)
+	}
+	return uu
+}
+
+// SetEmailVerified sets the "email_verified" field.
+func (uu *UserUpdate) SetEmailVerified(b bool) *UserUpdate {
+	uu.mutation.SetEmailVerified(b)
+	return uu
+}
+
+// SetNillableEmailVerified sets the "email_verified" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableEmailVerified(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetEmailVerified(*b)
+	}
+	return uu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdatedAt(t)
+	return uu
+}
+
+// SetLastLoginAt sets the "last_login_at" field.
+func (uu *UserUpdate) SetLastLoginAt(t time.Time) *UserUpdate {
+	uu.mutation.SetLastLoginAt(t)
+	return uu
+}
+
+// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLastLoginAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetLastLoginAt(*t)
+	}
+	return uu
+}
+
+// ClearLastLoginAt clears the value of the "last_login_at" field.
+func (uu *UserUpdate) ClearLastLoginAt() *UserUpdate {
+	uu.mutation.ClearLastLoginAt()
 	return uu
 }
 
@@ -77,6 +132,7 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
+	uu.defaults()
 	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
 }
 
@@ -102,21 +158,29 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uu *UserUpdate) defaults() {
+	if _, ok := uu.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uu.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
-	if v, ok := uu.mutation.TransactionID(); ok {
-		if err := user.TransactionIDValidator(v); err != nil {
-			return &ValidationError{Name: "transaction_id", err: fmt.Errorf(`ent: validator failed for field "User.transaction_id": %w`, err)}
+	if v, ok := uu.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
-	if v, ok := uu.mutation.SourceTransactionID(); ok {
-		if err := user.SourceTransactionIDValidator(v); err != nil {
-			return &ValidationError{Name: "source_transaction_id", err: fmt.Errorf(`ent: validator failed for field "User.source_transaction_id": %w`, err)}
+	if v, ok := uu.mutation.PasswordHash(); ok {
+		if err := user.PasswordHashValidator(v); err != nil {
+			return &ValidationError{Name: "password_hash", err: fmt.Errorf(`ent: validator failed for field "User.password_hash": %w`, err)}
 		}
 	}
-	if v, ok := uu.mutation.TerminalID(); ok {
-		if err := user.TerminalIDValidator(v); err != nil {
-			return &ValidationError{Name: "terminal_id", err: fmt.Errorf(`ent: validator failed for field "User.terminal_id": %w`, err)}
+	if v, ok := uu.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
 	return nil
@@ -140,14 +204,29 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := uu.mutation.TransactionID(); ok {
-		_spec.SetField(user.FieldTransactionID, field.TypeString, value)
+	if value, ok := uu.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.SourceTransactionID(); ok {
-		_spec.SetField(user.FieldSourceTransactionID, field.TypeString, value)
+	if value, ok := uu.mutation.PasswordHash(); ok {
+		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.TerminalID(); ok {
-		_spec.SetField(user.FieldTerminalID, field.TypeString, value)
+	if value, ok := uu.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
+	}
+	if value, ok := uu.mutation.IsActive(); ok {
+		_spec.SetField(user.FieldIsActive, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.EmailVerified(); ok {
+		_spec.SetField(user.FieldEmailVerified, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.LastLoginAt(); ok {
+		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
+	}
+	if uu.mutation.LastLoginAtCleared() {
+		_spec.ClearField(user.FieldLastLoginAt, field.TypeTime)
 	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
@@ -171,45 +250,99 @@ type UserUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetTransactionID sets the "transaction_id" field.
-func (uuo *UserUpdateOne) SetTransactionID(s string) *UserUpdateOne {
-	uuo.mutation.SetTransactionID(s)
+// SetEmail sets the "email" field.
+func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
+	uuo.mutation.SetEmail(s)
 	return uuo
 }
 
-// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableTransactionID(s *string) *UserUpdateOne {
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetTransactionID(*s)
+		uuo.SetEmail(*s)
 	}
 	return uuo
 }
 
-// SetSourceTransactionID sets the "source_transaction_id" field.
-func (uuo *UserUpdateOne) SetSourceTransactionID(s string) *UserUpdateOne {
-	uuo.mutation.SetSourceTransactionID(s)
+// SetPasswordHash sets the "password_hash" field.
+func (uuo *UserUpdateOne) SetPasswordHash(s string) *UserUpdateOne {
+	uuo.mutation.SetPasswordHash(s)
 	return uuo
 }
 
-// SetNillableSourceTransactionID sets the "source_transaction_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableSourceTransactionID(s *string) *UserUpdateOne {
+// SetNillablePasswordHash sets the "password_hash" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePasswordHash(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetSourceTransactionID(*s)
+		uuo.SetPasswordHash(*s)
 	}
 	return uuo
 }
 
-// SetTerminalID sets the "terminal_id" field.
-func (uuo *UserUpdateOne) SetTerminalID(s string) *UserUpdateOne {
-	uuo.mutation.SetTerminalID(s)
+// SetRole sets the "role" field.
+func (uuo *UserUpdateOne) SetRole(u user.Role) *UserUpdateOne {
+	uuo.mutation.SetRole(u)
 	return uuo
 }
 
-// SetNillableTerminalID sets the "terminal_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableTerminalID(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetTerminalID(*s)
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableRole(u *user.Role) *UserUpdateOne {
+	if u != nil {
+		uuo.SetRole(*u)
 	}
+	return uuo
+}
+
+// SetIsActive sets the "is_active" field.
+func (uuo *UserUpdateOne) SetIsActive(b bool) *UserUpdateOne {
+	uuo.mutation.SetIsActive(b)
+	return uuo
+}
+
+// SetNillableIsActive sets the "is_active" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableIsActive(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetIsActive(*b)
+	}
+	return uuo
+}
+
+// SetEmailVerified sets the "email_verified" field.
+func (uuo *UserUpdateOne) SetEmailVerified(b bool) *UserUpdateOne {
+	uuo.mutation.SetEmailVerified(b)
+	return uuo
+}
+
+// SetNillableEmailVerified sets the "email_verified" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableEmailVerified(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetEmailVerified(*b)
+	}
+	return uuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
+// SetLastLoginAt sets the "last_login_at" field.
+func (uuo *UserUpdateOne) SetLastLoginAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetLastLoginAt(t)
+	return uuo
+}
+
+// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLastLoginAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetLastLoginAt(*t)
+	}
+	return uuo
+}
+
+// ClearLastLoginAt clears the value of the "last_login_at" field.
+func (uuo *UserUpdateOne) ClearLastLoginAt() *UserUpdateOne {
+	uuo.mutation.ClearLastLoginAt()
 	return uuo
 }
 
@@ -233,6 +366,7 @@ func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne 
 
 // Save executes the query and returns the updated User entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	uuo.defaults()
 	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
 }
 
@@ -258,21 +392,29 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uuo *UserUpdateOne) defaults() {
+	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uuo.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uuo *UserUpdateOne) check() error {
-	if v, ok := uuo.mutation.TransactionID(); ok {
-		if err := user.TransactionIDValidator(v); err != nil {
-			return &ValidationError{Name: "transaction_id", err: fmt.Errorf(`ent: validator failed for field "User.transaction_id": %w`, err)}
+	if v, ok := uuo.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
-	if v, ok := uuo.mutation.SourceTransactionID(); ok {
-		if err := user.SourceTransactionIDValidator(v); err != nil {
-			return &ValidationError{Name: "source_transaction_id", err: fmt.Errorf(`ent: validator failed for field "User.source_transaction_id": %w`, err)}
+	if v, ok := uuo.mutation.PasswordHash(); ok {
+		if err := user.PasswordHashValidator(v); err != nil {
+			return &ValidationError{Name: "password_hash", err: fmt.Errorf(`ent: validator failed for field "User.password_hash": %w`, err)}
 		}
 	}
-	if v, ok := uuo.mutation.TerminalID(); ok {
-		if err := user.TerminalIDValidator(v); err != nil {
-			return &ValidationError{Name: "terminal_id", err: fmt.Errorf(`ent: validator failed for field "User.terminal_id": %w`, err)}
+	if v, ok := uuo.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
 	return nil
@@ -313,14 +455,29 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
-	if value, ok := uuo.mutation.TransactionID(); ok {
-		_spec.SetField(user.FieldTransactionID, field.TypeString, value)
+	if value, ok := uuo.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.SourceTransactionID(); ok {
-		_spec.SetField(user.FieldSourceTransactionID, field.TypeString, value)
+	if value, ok := uuo.mutation.PasswordHash(); ok {
+		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.TerminalID(); ok {
-		_spec.SetField(user.FieldTerminalID, field.TypeString, value)
+	if value, ok := uuo.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
+	}
+	if value, ok := uuo.mutation.IsActive(); ok {
+		_spec.SetField(user.FieldIsActive, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.EmailVerified(); ok {
+		_spec.SetField(user.FieldEmailVerified, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.LastLoginAt(); ok {
+		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
+	}
+	if uuo.mutation.LastLoginAtCleared() {
+		_spec.ClearField(user.FieldLastLoginAt, field.TypeTime)
 	}
 	_spec.AddModifiers(uuo.modifiers...)
 	_node = &User{config: uuo.config}
