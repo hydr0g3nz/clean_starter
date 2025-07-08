@@ -25,16 +25,3 @@ type UserRepository interface {
 	ListByRole(ctx context.Context, role string, limit, offset int) ([]*entity.User, error)
 	UpdateLastLogin(ctx context.Context, id int) error
 }
-
-type WalletRepository interface {
-	Create(entity.Wallet) error
-	Update(entity.Wallet) error
-	FindById(id uint) (*entity.Wallet, error)
-}
-
-type TransactionRepository interface {
-	FindAll(*entity.TransactionFilter) ([]entity.Transaction, error)
-	FindById(id uint) (*entity.Transaction, error)
-	Create(entity.Transaction) (uint, error)
-	Update(*entity.TransactionFilter, entity.Transaction) error
-}

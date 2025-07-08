@@ -1,191 +1,232 @@
+# Wallet Top-up System
+
+A scalable wallet top-up system built with Go, using Clean Architecture principles, SQLC for database operations, and Redis for caching.
+
+## Tech Stack
+
+- **Go** - Programming language
+- **Fiber** - Web framework
+- **PostgreSQL** - Database
+- **SQLC** - Type-safe SQL code generation
+- **Redis** - Caching
+- **Docker** - Containerization
+
 ## Getting Started
 
-Follow these steps to get the project up and running locally using Docker Compose.
+### Prerequisites
 
-1.  **Clone the repository:**
+- Go 1.23+
+- PostgreSQL 16+
+- Redis 7+
+- Docker & Docker Compose (optional)
 
-    ```bash
-    git clone https://github.com/hydr0g3nz/top_up_wallet.git
-    cd top_up_wallet
-    ```
-    Replace `<repository_url>` with the actual URL of your repository and `<repository_directory>` with the resulting directory name.
+### Installation
 
-2.  **Create the Environment File:**
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/hydr0g3nz/top_up_wallet.git
+   cd top_up_wallet
+   ```
 
-    Create a file named `.env` in the root directory of the project (where `docker-compose.yml` is located). Copy the following content into this file.
+2. **Install dependencies:**
+   ```bash
+   make install-deps
+   ```
 
-    **Important:** Change the default values for `DB_PASSWORD` and `REDIS_PASSWORD` for any environment other than local development.
+3. **Install tools:**
+   ```bash
+   make install-tools
+   ```
 
-    ```env
-    # Server settings
-    PORT=8080
-    SERVER_READ_TIMEOUT=10
-    SERVER_WRITE_TIMEOUT=10
-    SERVER_HOST=localhost
+4. **Create environment file:**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your configuration.
 
-    # Database settings
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_USER=user
-    DB_PASSWORD=pass
-    DB_NAME=topup_wallet
-    DB_SSLMODE=disable
+5. **Setup database:**
+   ```bash
+   make db-setup
+   ```
+   This will run migrations and generate SQLC code.
 
-    # Cache settings
-    REDIS_HOST=localhost
-    REDIS_PORT=6379
-    REDIS_PASSWORD=pass
-    REDIS_DB=0
+### Running the Application
 
-    # Logging
-    LOG_LEVEL=info
-
-
-    ```
-
-
-3.  **Build and Run with Docker Compose:**
-
-    Open your terminal in the project's root directory and run the following command:
-
-    ```bash
-    docker compose up -d
-    ```
-
-    * `docker compose up`: Starts the services defined in `docker-compose.yml`.
-    * `-d`: Runs the containers in detached mode (in the background).
-
-    This command will:
-    * Build the Docker images for the services (if not already built).
-    * Start the containers defined in `docker-compose.yml`.
-    * Run the containers in detached mode (in the background).
-
-4.  **Verify Containers are Running:**
-
-    You can check the status of the containers using:
-
-    ```bash
-    docker compose ps
-    ```
-
-    * `docker compose ps`: Lists the status of the services defined in `docker-compose.yml`.
-
-5.  **Access the API:**
-
-    Once the containers are up and running, you can access the API at the following URL: `http://localhost:8080/api/v1`.
-
-
-## Configuration
-
-The project's behavior is primarily controlled by environment variables, configured via the `.env` file when using Docker Compose.
-
-* `PORT`: Internal port the Go application listens on (exposed via Docker).
-* `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_SSLMODE`: Database connection details.
-* `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `REDIS_DB`: Redis cache connection details.
-* `LOG_LEVEL`: Log level for the application.
-
-## Stopping the Project
-
-To stop the running containers:
+#### With Docker Compose (Recommended)
 
 ```bash
-docker compose down
+make docker-run
 ```
-## Core Features
 
-### 1. Wallet Top-up Verification
+#### Local Development
 
-* Description: Validates user top-up requests and creates transaction records
-* Key Functionality:
-	+ User ID validation
-	+ Amount validation against system limits
-	+ Payment method validation
-	+ Transaction creation with "verified" status
-	+ 15-minute expiration time for pending transactions
-	+ Cache storage for optimized retrieval
+1. **Start PostgreSQL and Redis:**
+   ```bash
+   # Using Docker
+   docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=pass postgres:16.2
+   docker run -d --name redis -p 6379:6379 redis:7.2
+   ```
 
-### 2. Top-up Confirmation
+2. **Run migrations:**
+   ```bash
+   ./scripts/migrate.sh
+   ```
 
-* Description: Processes and finalizes verified top-up requests
-* Key Functionality:
-	+ Transaction verification status check
-	+ Expiration time validation
-	+ Atomic wallet balance update
-	+ Transaction status update to "completed"
-	+ Cache invalidation after completion
+3. **Start the application:**
+   ```bash
+   make run
+   ```
 
-### 3. Wallet Management
+### API Endpoints
 
-* Description: Handles user wallet data and operations
-* Key Functionality:
-	+ Balance storage and retrieval
-	+ Secure balance updates
-	+ Transaction-based operations for data integrity
+#### User Management
 
-### 4. User Authentication
+- `POST /api/v1/users/register` - Register a new user
+- `POST /api/v1/users/login` - Login user
+- `GET /api/v1/users/me` - Get current user profile
+- `PUT /api/v1/users/me` - Update current user profile
+- `PUT /api/v1/users/me/password` - Change current user password
 
-* Description: Ensures top-up requests come from valid users
-* Key Functionality:
-	+ User existence validation
-	+ User data retrieval for transactions
+#### Admin Endpoints
 
-## Supporting Features
+- `GET /api/v1/users/` - List users by role
+- `GET /api/v1/users/:id` - Get user by ID
+- `PUT /api/v1/users/:id` - Update user
+- `DELETE /api/v1/users/:id` - Delete user
+- `PUT /api/v1/users/:id/activate` - Activate user
+- `PUT /api/v1/users/:id/deactivate` - Deactivate user
 
-### 1. Redis Caching
+### Development
 
-* Description: Performance enhancement through distributed caching
-* Key Functionality:
-	+ Transaction data caching
-	+ Configurable expiration times
-	+ Reduced database load for frequent operations
+#### Generate SQLC Code
 
-### 2. Database Transactions
+```bash
+make sqlc-gen
+```
 
-* Description: Ensures data integrity across multi-step operations
-* Key Functionality:
-	+ Atomic operations for wallet updates and transaction status changes
-	+ Automatic rollback on errors
-	+ Transaction-scoped repositories
+#### Run Tests
 
-### 3. Validation System
+```bash
+make test
+```
 
-* Description: Enforces business rules and data integrity
-* Key Functionality:
-	+ Maximum amount validation
-	+ Negative amount prevention
-	+ Payment method validation
-	+ Transaction status validation
+#### Hot Reload (with Air)
 
-### 4. Transaction Status Management
+```bash
+make dev
+```
 
-* Description: Handles the lifecycle of transactions
-* Key Functionality:
-	+ Multiple status support: verified, completed, failed, expired
-	+ Automatic status transitions
-	+ Status-based operation restrictions
+### Database Schema
 
-### 5. Payment Method Support
+The application uses PostgreSQL with the following main tables:
 
-* Description: Processes different payment method types
-* Key Functionality:
-	+ Credit card payment support
-	+ Extensible design for additional payment methods
+- `users` - User accounts with roles (candidate, company_hr, admin)
 
-## Technical Architecture
+### Configuration
 
-The system is built using Go with a Clean Architecture approach:
+Environment variables:
 
-* Domain Layer: Core business logic and entities
-* Application Layer: Use cases and business rules
-* Infrastructure Layer: External interfaces (database, cache, API)
-* Adapter Layer: Controllers and data transformations
+```env
+# Server
+PORT=8080
+SERVER_HOST=localhost
+SERVER_READ_TIMEOUT=10
+SERVER_WRITE_TIMEOUT=10
 
-## Deployment
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=user
+DB_PASSWORD=pass
+DB_NAME=topup_wallet
+DB_SSLMODE=disable
 
-* Containerized with Docker and Docker Compose
-* Three main services:
-	+ Go application
-	+ PostgreSQL database
-	+ Redis cache
-* Environment variable configuration
-* Easy local development setup
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=pass
+REDIS_DB=0
+
+# Application
+LOG_LEVEL=info
+MAX_ACCEPTED_AMOUNT=100000.0
+```
+
+### Project Structure
+
+```
+.
+├── cmd/
+│   └── main.go                     # Application entry point
+├── config/
+│   └── config.go                   # Configuration management
+├── internal/
+│   ├── adapter/
+│   │   ├── controller/             # HTTP handlers
+│   │   ├── repository/             # Data access layer
+│   │   │   └── sqlc/              # SQLC repositories
+│   │   └── sqlc/                  # SQLC generated code
+│   │       ├── generated/         # Generated SQLC code
+│   │       ├── queries/           # SQL queries
+│   │       └── schema/            # Database schema
+│   ├── application/               # Use cases/business logic
+│   ├── domain/                    # Domain entities and interfaces
+│   │   ├── entity/               # Domain entities
+│   │   ├── repository/           # Repository interfaces
+│   │   ├── vo/                   # Value objects
+│   │   └── infra/               # Infrastructure interfaces
+│   └── infrastructure/           # External dependencies
+├── scripts/
+│   └── migrate.sh                # Database migration script
+├── docker-compose.yaml
+├── Dockerfile
+├── sqlc.yaml                     # SQLC configuration
+└── Makefile
+```
+
+### Architecture
+
+This project follows Clean Architecture principles:
+
+- **Domain Layer**: Contains business entities, value objects, and interfaces
+- **Application Layer**: Contains use cases and business logic
+- **Infrastructure Layer**: Contains external dependencies (database, cache, HTTP)
+- **Adapter Layer**: Contains controllers, repositories, and data transformation
+
+### Features
+
+#### Completed
+
+- User registration and authentication
+- Role-based access control (candidate, company_hr, admin)
+- User profile management
+- Password management
+- Email verification
+- User activation/deactivation
+- Clean Architecture implementation
+- SQLC integration for type-safe database operations
+- Redis caching
+- Docker support
+- Graceful shutdown
+
+#### Planned
+
+- JWT authentication
+- Wallet top-up functionality
+- Transaction management
+- Rate limiting
+- API documentation with Swagger
+- Unit tests
+- Integration tests
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
+
+### License
+
+This project is licensed under the MIT License.

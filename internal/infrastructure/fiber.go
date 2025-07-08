@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"runtime/debug"
 	"time"
 
@@ -17,7 +18,11 @@ type ServerConfig struct {
 	IdleTimeout  time.Duration `yaml:"idleTimeout"`
 }
 
-func NewFiber(config ServerConfig) *fiber.App {
+type FiberApp struct {
+	*fiber.App
+}
+
+func NewFiber(config ServerConfig) *FiberApp {
 	app := fiber.New(fiber.Config{
 		ReadTimeout:  config.ReadTimeout,
 		WriteTimeout: config.WriteTimeout,
@@ -46,5 +51,9 @@ func NewFiber(config ServerConfig) *fiber.App {
 		},
 	}))
 
-	return app
+	return &FiberApp{App: app}
+}
+
+func (f *FiberApp) ShutdownWithContext(ctx context.Context) error {
+	return f.App.ShutdownWithContext(ctx)
 }

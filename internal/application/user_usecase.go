@@ -29,7 +29,6 @@ type UserUsecase interface {
 // userUsecase implements UserUsecase interface
 type userUsecase struct {
 	userRepo repository.UserRepository
-	cache    infra.CacheService
 	logger   infra.Logger
 	config   *config.Config
 }
@@ -37,23 +36,19 @@ type userUsecase struct {
 // NewUserUsecase creates a new user usecase
 func NewUserUsecase(
 	userRepo repository.UserRepository,
-	// cache infra.CacheService,
 	logger infra.Logger,
 	config *config.Config,
 ) UserUsecase {
 	return &userUsecase{
 		userRepo: userRepo,
-		// cache:    cache,
-		logger: logger,
-		config: config,
+		logger:   logger,
+		config:   config,
 	}
 }
 
 // Register creates a new user account
 func (u *userUsecase) Register(ctx context.Context, req *RegisterRequest) (*UserResponse, error) {
 	u.logger.Info("Starting user registration", "email", req.Email, "role", req.Role)
-
-	// Validate request
 
 	// Check if user already exists
 	existingUser, err := u.userRepo.GetByEmail(ctx, req.Email)
@@ -72,11 +67,13 @@ func (u *userUsecase) Register(ctx context.Context, req *RegisterRequest) (*User
 		u.logger.Error("Error hashing password", "error", err)
 		return nil, fmt.Errorf("failed to hash password: %w", err)
 	}
+
 	role, err := vo.ParseUserRole(req.Role)
 	if err != nil {
 		u.logger.Error("Invalid user role", "error", err, "role", req.Role)
 		return nil, err
 	}
+
 	// Create user entity
 	user := &entity.User{
 		Email:         req.Email,
@@ -131,9 +128,6 @@ func (u *userUsecase) Login(ctx context.Context, req *LoginRequest) (*LoginRespo
 		// Don't fail login for this error
 	}
 
-	// Clear user cache
-	u.clearUserCache(ctx, user.ID)
-
 	u.logger.Info("User logged in successfully", "userID", user.ID, "email", user.Email)
 
 	return &LoginResponse{
@@ -142,11 +136,10 @@ func (u *userUsecase) Login(ctx context.Context, req *LoginRequest) (*LoginRespo
 	}, nil
 }
 
-// GetProfile retrieves user profile with caching
+// GetProfile retrieves user profile
 func (u *userUsecase) GetProfile(ctx context.Context, userID int) (*UserResponse, error) {
 	u.logger.Debug("Getting user profile", "userID", userID)
 
-	// Get from database
 	user, err := u.userRepo.GetByID(ctx, userID)
 	if err != nil {
 		u.logger.Error("Error getting user profile", "error", err, "userID", userID)
@@ -195,9 +188,6 @@ func (u *userUsecase) UpdateProfile(ctx context.Context, userID int, req *Update
 		return nil, fmt.Errorf("failed to update user: %w", err)
 	}
 
-	// Clear cache
-	u.clearUserCache(ctx, userID)
-
 	u.logger.Info("User profile updated successfully", "userID", userID)
 
 	return u.toUserResponse(updatedUser), nil
@@ -238,9 +228,6 @@ func (u *userUsecase) ChangePassword(ctx context.Context, userID int, req *Chang
 		return fmt.Errorf("failed to update password: %w", err)
 	}
 
-	// Clear cache
-	u.clearUserCache(ctx, userID)
-
 	u.logger.Info("Password changed successfully", "userID", userID)
 	return nil
 }
@@ -263,7 +250,6 @@ func (u *userUsecase) VerifyEmail(ctx context.Context, userID int) error {
 		return fmt.Errorf("failed to verify email: %w", err)
 	}
 
-	u.clearUserCache(ctx, userID)
 	u.logger.Info("Email verified successfully", "userID", userID)
 	return nil
 }
@@ -286,7 +272,6 @@ func (u *userUsecase) DeactivateUser(ctx context.Context, userID int) error {
 		return fmt.Errorf("failed to deactivate user: %w", err)
 	}
 
-	u.clearUserCache(ctx, userID)
 	u.logger.Info("User deactivated successfully", "userID", userID)
 	return nil
 }
@@ -309,16 +294,14 @@ func (u *userUsecase) ActivateUser(ctx context.Context, userID int) error {
 		return fmt.Errorf("failed to activate user: %w", err)
 	}
 
-	u.clearUserCache(ctx, userID)
 	u.logger.Info("User activated successfully", "userID", userID)
 	return nil
 }
 
-// GetUsersByRole retrieves users by role with caching
+// GetUsersByRole retrieves users by role
 func (u *userUsecase) GetUsersByRole(ctx context.Context, role string, limit, offset int) ([]*UserResponse, error) {
 	u.logger.Debug("Getting users by role", "role", role, "limit", limit, "offset", offset)
 
-	// Get from database
 	users, err := u.userRepo.ListByRole(ctx, role, limit, offset)
 	if err != nil {
 		u.logger.Error("Error getting users by role", "error", err, "role", role)
@@ -332,7 +315,7 @@ func (u *userUsecase) GetUsersByRole(ctx context.Context, role string, limit, of
 func (u *userUsecase) DeleteUser(ctx context.Context, userID int) error {
 	u.logger.Info("Deleting user", "userID", userID)
 
-	// Get user to clear role-based cache
+	// Get user first to check if it exists
 	user, err := u.userRepo.GetByID(ctx, userID)
 	if err != nil {
 		return fmt.Errorf("failed to get user: %w", err)
@@ -355,7 +338,7 @@ func (u *userUsecase) DeleteUser(ctx context.Context, userID int) error {
 
 // hashPassword hashes a password using bcrypt
 func (u *userUsecase) hashPassword(password string) (string, error) {
-	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), 0)
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
@@ -366,24 +349,6 @@ func (u *userUsecase) hashPassword(password string) (string, error) {
 func (u *userUsecase) verifyPassword(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
-}
-
-// getUserCacheKey generates cache key for user
-func (u *userUsecase) getUserCacheKey(userID int) string {
-	return fmt.Sprintf("user:%d", userID)
-}
-
-// getUsersByRoleCacheKey generates cache key for users by role
-func (u *userUsecase) getUsersByRoleCacheKey(role string, limit int) string {
-	return fmt.Sprintf("users:role:%s:limit:%d", role, limit)
-}
-
-// clearUserCache clears cache for specific user
-func (u *userUsecase) clearUserCache(ctx context.Context, userID int) {
-	cacheKey := u.getUserCacheKey(userID)
-	if err := u.cache.Delete(ctx, cacheKey); err != nil {
-		u.logger.Error("Error clearing user cache", "error", err, "userID", userID)
-	}
 }
 
 // toUserResponse converts entity to response

@@ -9,21 +9,24 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
+      - redis
     ports:
-      - "${PORT}:8080" 
+      - "${PORT:-8080}:8080"
     environment:
       - DB_HOST=postgres
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER:-user}
+      - DB_PASSWORD=${DB_PASSWORD:-pass}
+      - DB_NAME=${DB_NAME:-topup_wallet}
       - DB_SSLMODE=disable
       - PORT=8080
-      - SERVER_HOST=${SERVER_HOST}
+      - SERVER_HOST=${SERVER_HOST:-localhost}
       - REDIS_HOST=redis
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-pass}
       - REDIS_DB=0
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - MAX_ACCEPTED_AMOUNT=${MAX_ACCEPTED_AMOUNT:-100000.0}
     networks:
       - app-network
 
@@ -32,28 +35,31 @@ services:
     container_name: topup-wallet-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pass}
+      POSTGRES_DB: ${DB_NAME:-topup_wallet}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./internal/adapter/sqlc/schema:/docker-entrypoint-initdb.d
     networks:
       - app-network
+
   redis:
     image: redis:7.2
     container_name: topup-wallet-redis
     restart: always
     ports:
-      - "${REDIS_PORT}:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis-data:/data
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD:-pass}
     environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}  
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-pass}
     networks:
       - app-network
+
 networks:
   app-network:
     driver: bridge
