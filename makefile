@@ -22,11 +22,11 @@ install-tools:
 
 # Run migrations up (if you use migration tool like goose)
 migration-up:
-	goose -dir internal/adapter/sqlc/schema postgres "postgres://user:pass@localhost:5432/topup_wallet?sslmode=disable" up
+	goose -dir internal/adapter/sqlc/schema postgres "postgres://user:pass@localhost:5432/jobs?sslmode=disable" up
 
 # Run migrations down (if you use migration tool like goose)
 migration-down:
-	goose -dir internal/adapter/sqlc/schema postgres "postgres://user:pass@localhost:5432/topup_wallet?sslmode=disable" down
+	goose -dir internal/adapter/sqlc/schema postgres "postgres://user:pass@localhost:5432/jobs?sslmode=disable" down
 
 # Clean generated files
 clean:
