@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
-	errs "github.com/hydr0g3nz/wallet_topup_system/internal/domain/error"
+	errs "github.com/hydr0g3nz/clean_stater/internal/domain/error"
 )
 
 type successResponse struct {

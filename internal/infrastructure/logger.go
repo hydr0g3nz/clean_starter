@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/infra"
+	"github.com/hydr0g3nz/clean_stater/internal/domain/infra"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

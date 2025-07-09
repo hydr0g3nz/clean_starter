@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hydr0g3nz/wallet_topup_system/config"
-	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/entity"
-	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/infra"
-	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/repository"
-	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/vo"
+	"github.com/hydr0g3nz/clean_stater/config"
+	"github.com/hydr0g3nz/clean_stater/internal/domain/entity"
+	"github.com/hydr0g3nz/clean_stater/internal/domain/infra"
+	"github.com/hydr0g3nz/clean_stater/internal/domain/repository"
+	"github.com/hydr0g3nz/clean_stater/internal/domain/vo"
 	"golang.org/x/crypto/bcrypt"
 )
 

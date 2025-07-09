@@ -8,11 +8,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/hydr0g3nz/wallet_topup_system/config"
-	"github.com/hydr0g3nz/wallet_topup_system/internal/adapter/controller"
-	sqlcRepo "github.com/hydr0g3nz/wallet_topup_system/internal/adapter/repository/sqlc"
-	usecase "github.com/hydr0g3nz/wallet_topup_system/internal/application"
-	"github.com/hydr0g3nz/wallet_topup_system/internal/infrastructure"
+	"github.com/hydr0g3nz/clean_stater/config"
+	"github.com/hydr0g3nz/clean_stater/internal/adapter/controller"
+	sqlcRepo "github.com/hydr0g3nz/clean_stater/internal/adapter/repository/sqlc"
+	usecase "github.com/hydr0g3nz/clean_stater/internal/application"
+	"github.com/hydr0g3nz/clean_stater/internal/infrastructure"
 )
 
 func main() {
@@ -49,7 +49,11 @@ func main() {
 	userController := controller.NewUserController(userUsecase)
 
 	// Setup fiber server
-	app := infrastructure.NewFiber(cfg)
+	app := infrastructure.NewFiber(infrastructure.ServerConfig{
+		Address:      cfg.Server.Port,
+		ReadTimeout:  time.Duration(cfg.Server.ReadTimeout) * time.Second,
+		WriteTimeout: time.Duration(cfg.Server.WriteTimeout) * time.Second,
+	})
 
 	// Register routes
 	api := app.Group("/api/v1")

@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/hydr0g3nz/wallet_topup_system/internal/adapter/dto"
-	usecase "github.com/hydr0g3nz/wallet_topup_system/internal/application"
+	"github.com/hydr0g3nz/clean_stater/internal/adapter/dto"
+	usecase "github.com/hydr0g3nz/clean_stater/internal/application"
 )
 
 // UserController handles HTTP requests related to user operations

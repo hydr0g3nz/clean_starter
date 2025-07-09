@@ -3,13 +3,11 @@ package repository
 import (
 	"context"
 
-	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/entity"
+	"github.com/hydr0g3nz/clean_stater/internal/domain/entity"
 )
 
 type Repository interface {
 	UserRepository() UserRepository
-	WalletRepository() WalletRepository
-	TransactionRepository() TransactionRepository
 }
 type DBTransaction interface {
 	DoInTransaction(fn func(repo Repository) error) error

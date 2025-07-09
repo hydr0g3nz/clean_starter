@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/hydr0g3nz/wallet_topup_system/internal/infrastructure"
+	"github.com/hydr0g3nz/clean_stater/internal/infrastructure"
 	"github.com/joho/godotenv"
 )
 

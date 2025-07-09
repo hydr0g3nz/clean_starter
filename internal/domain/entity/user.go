@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"github.com/hydr0g3nz/wallet_topup_system/internal/domain/vo"
+	"github.com/hydr0g3nz/clean_stater/internal/domain/vo"
 )
 
 // User represents the user domain entity

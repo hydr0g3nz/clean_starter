@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	err "github.com/hydr0g3nz/wallet_topup_system/internal/domain/error"
+	err "github.com/hydr0g3nz/clean_stater/internal/domain/error"
 )
 
 type Money struct {
